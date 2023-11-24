@@ -1,0 +1,253 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- led_utils.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- Utility functions to program the state of LEDs on Thrustmaster Viper
+  -- and Warthog devices.
+  --
+  -- Author: slughead
+  -- Date: 24/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+include "viper_defines.tmh"
+include "viper_utils.tmh"
+include "warthog_defines.tmh"
+include "warthog_utils.tmh"
+
+define LED_STATE_OFF   0
+define LED_STATE_ON    1
+define LED_STATE_FLASH 2
+
+define FLASH_INTERVAL 250
+
+int char_to_int( char c )
+{
+    int result = 0;
+
+    if (c >= '0' | c <= '9')
+    {
+        result = c - '0';
+    }
+
+    return c - '0';
+}
+
+int reset_leds()
+{
+    // Viper Mission Pack or Viper Panel - assuming no one would have both!
+    int viper_device = get_viper_device();
+
+    if (viper_device != &joy0)
+    {
+        set_led(viper_device, LED_GEAR_NOSE,         LED_STATE_OFF);
+        set_led(viper_device, LED_GEAR_LEFT,         LED_STATE_OFF);
+        set_led(viper_device, LED_GEAR_RIGHT,        LED_STATE_OFF);
+        set_led(viper_device, LED_GEAR_WARNING,      LED_STATE_OFF);
+        set_led(viper_device, LED_RWR_SEARCH,        LED_STATE_OFF);
+        set_led(viper_device, LED_RWR_A_POWER,       LED_STATE_OFF);
+        set_led(viper_device, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
+        set_led(viper_device, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
+        set_led(viper_device, LED_RWR_SYSTEM_POWER,  LED_STATE_OFF);
+
+        set_led(viper_device, LED_USER_LEFT_1,       LED_STATE_OFF);
+        set_led(viper_device, LED_USER_LEFT_2,       LED_STATE_OFF);
+        set_led(viper_device, LED_USER_LEFT_3,       LED_STATE_OFF);
+        set_led(viper_device, LED_USER_LEFT_4,       LED_STATE_OFF);
+        set_led(viper_device, LED_USER_LEFT_5,       LED_STATE_OFF);
+
+        set_led(viper_device, LED_USER_RIGHT_1,      LED_STATE_OFF);
+        set_led(viper_device, LED_USER_RIGHT_2,      LED_STATE_OFF);
+        set_led(viper_device, LED_USER_RIGHT_3,      LED_STATE_OFF);
+        set_led(viper_device, LED_USER_RIGHT_4,      LED_STATE_OFF);
+        set_led(viper_device, LED_USER_RIGHT_5,      LED_STATE_OFF);
+    }
+
+    // Warthog Throttle
+    if (&Throttle != &joy0)
+    {
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), LED_STATE_OFF);
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), LED_STATE_OFF);
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), LED_STATE_OFF);
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), LED_STATE_OFF);
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), LED_STATE_OFF);
+    }
+}
+
+int set_led_status( alias led_states )
+{
+    int gear_nose_status        = char_to_int(led_states[1]);
+    int gear_left_status        = char_to_int(led_states[2]);
+    int gear_right_status       = char_to_int(led_states[3]);
+    int gear_warning_status     = char_to_int(led_states[4]);
+    int rwr_search_status       = char_to_int(led_states[5]);
+    int rwr_activity_status     = char_to_int(led_states[6]);
+    int rwr_a_power_status      = char_to_int(led_states[7]);
+    int rwr_alt_low_status      = char_to_int(led_states[8]);
+    int rwr_alt_status          = char_to_int(led_states[9]);
+    int rwr_system_power_status = char_to_int(led_states[10]);
+    int speed_brake_position    = char_to_int(led_states[11]);
+
+    int device = get_viper_device();
+
+    printf("SetLedStatus:   device:    %d\xa", device);
+
+    if (device != &joy0)
+    {
+        set_led(device, LED_GEAR_NOSE,         gear_nose_status);
+        set_led(device, LED_GEAR_LEFT,         gear_left_status);
+        set_led(device, LED_GEAR_RIGHT,        gear_right_status);
+        set_led(device, LED_GEAR_WARNING,      gear_warning_status);
+
+        set_led(device, LED_RWR_SEARCH,        rwr_search_status);
+        set_led(device, LED_RWR_A_POWER,       rwr_activity_status);
+
+        // Thrustmaster limitation for ACT/PWR indication - only one LED.
+        // Power should be lit when rwr_system_power_status is on and A
+        // should be light amber when rwr_activity_status is on.
+        // One compromise would be to light the LED when rwr_system_power_status
+        // is on and flash the LED if rwr_system_power_status is on and
+        // rwr_activity_status is also on.
+        //set_led(device, LED_RWR_A_POWER,       rwr_a_power_status);
+
+        if (rwr_alt_low_status == 1)
+        {
+            set_led(device, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
+            set_led(device, LED_RWR_LOW_ALT_RED,   rwr_alt_low_status);
+        }
+        else
+        {
+            set_led(device, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
+            set_led(device, LED_RWR_LOW_ALT_GREEN, rwr_alt_status);
+        }
+
+        set_led(device, LED_RWR_SYSTEM_POWER,  rwr_system_power_status);
+    }
+
+    set_speed_brake_leds(speed_brake_position);
+}
+
+int set_speed_brake_leds(int speed_brake_position)
+{
+    int device;
+
+    if (aircraft == F_16C_50)
+    {
+        device = get_viper_device();
+
+        if (device != &joy0)
+        {
+            set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 1));
+            set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 2));
+            set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 3));
+            set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 4));
+            set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 5));
+        }
+    }
+    else if ( aircraft == A_10C |
+              aircraft == A_10C_2 |
+              aircraft == FA_18C_HORNET |
+              aircraft == SU_25T |
+              aircraft == SU_33 )
+    {
+        if (&Throttle != &joy0)
+        {
+            set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 1));
+            set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 2));
+            set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 3));
+            set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 4));
+            set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5));
+        }
+    }
+}
+
+
+// TODO led flashing currently does not support individual flashing LEDs
+// and is only supported on ViperTQS/ViperBBox for Search indicator.
+int flash_led = 0;
+
+int set_led(int device, int led_id, int led_state)
+{
+    int i;
+
+    if (device == &ViperTQS | device == &ViperBBox)
+    {
+        if (led_state == LED_STATE_FLASH)
+        {
+            if (led_id == LED_RWR_SEARCH & flash_led == 0)
+            {
+                flash_led = 1;
+                start_led_flash_event_loop();
+            }
+        }
+        else
+        {
+            if (led_id == LED_RWR_SEARCH & flash_led == 1)
+            {
+                flash_led = 0;
+            }
+
+            // turn led on or off
+            // LEDV commands need to be sent multiple times to be certain they are executed on the device
+            i = 0; while (i<3)
+            {
+                ActKey(PULSE+KEYON+LEDV( device, led_id, led_state ));
+                i = i+1;
+            }
+        }
+    }
+    else if (device == &Throttle)
+    {
+        if (led_state == LED_STATE_OFF)
+        {
+            ActKey(PULSE+KEYON+LED(device, LED_ONOFF, LED_CURRENT-led_id));
+        }
+        else
+        {
+            ActKey(PULSE+KEYON+LED(device, LED_ONOFF, LED_CURRENT+led_id));
+        }
+    }
+}
+
+int rwr_search_led_next_state;
+
+int start_led_flash_event_loop()
+{
+    // FIRST CALL .. ON SOME EVENT
+    rwr_search_led_next_state = LED_STATE_OFF;
+    handle_flash_cycle(0);
+}
+
+int handle_flash_cycle(int cycle_num)
+{
+    int i;
+    int device = get_viper_device();
+
+    if (flash_led == 1)
+    {
+        if (device == &ViperTQS | device == &ViperBBox)
+        {
+            // LEDV commands need to be sent multiple times to be certain they are executed on the device
+            i = 0; while (i<3)
+            {
+                ActKey(PULSE+KEYON+LEDV( device, LED_RWR_SEARCH, rwr_search_led_next_state ));
+                i = i+1;
+            }
+
+            // set next state of flashing led
+            if ( rwr_search_led_next_state == LED_STATE_ON)
+            {
+                rwr_search_led_next_state = LED_STATE_OFF;
+            }
+            else
+            {
+                rwr_search_led_next_state = LED_STATE_ON;
+            }
+
+            // NEXT CYCLE LOOP
+            DeferCall(FLASH_INTERVAL, &handle_flash_cycle, cycle_num + 1);
+        }
+    }
+}

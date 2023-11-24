@@ -9,80 +9,44 @@
   -- gear and RWR lamps of the F-16C_50.
   --
   -- Author: slughead
-  -- Date: 22/11/2023
+  -- Date: 24/11/2023
   --
   ------------------------------------------------------------------------------*/
 
 include "target.tmh"
-
-define LED_GEAR_NOSE         1
-define LED_GEAR_LEFT         2
-define LED_GEAR_RIGHT        3
-define LED_GEAR_WARNING      19
-define LED_RWR_SEARCH        14
-define LED_RWR_A_POWER       15
-define LED_RWR_LOW_ALT_RED   16
-define LED_RWR_LOW_ALT_GREEN 17
-define LED_RWR_SYSTEM_POWER  18
-
-define LED_USER_LEFT_1 12
-define LED_USER_LEFT_2 10
-define LED_USER_LEFT_3 8
-define LED_USER_LEFT_4 6
-define LED_USER_LEFT_5 4
-
-define LED_USER_RIGHT_1 13
-define LED_USER_RIGHT_2 11
-define LED_USER_RIGHT_3 9
-define LED_USER_RIGHT_4 7
-define LED_USER_RIGHT_5 5
-
-define LED_STATE_OFF 0
-define LED_STATE_ON  1
-
-// GEAR NOSE (OFF/GREEN/RED/YELLOW/BLUE/LBLUE/PURPLE/WHITE)
-// GEAR LEFT (OFF/GREEN/RED/YELLOW/BLUE/LBLUE/PURPLE/WHITE)
-// GEAR RIGHT (OFF/GREEN/RED/YELLOW/BLUE/LBLUE/PURPLE/WHITE)
-// GEAR WARNING (OFF/RED)
-// SEARCH (OFF/GREEN)
-// A POWER (OFF/GREEN)
-// LOW ALT (OFF/RED)
-// LOW ALT (OFF/GREEN)
-// SYSTEM POWER (OFF/GREEN)
+include "aircraft_utils.tmh"
+include "led_utils.tmh"
 
 int main()
 {
-    Configure(&Throttle, MODE_EXCLUDED);
-    Configure(&Joystick, MODE_EXCLUDED);
-    Configure(&JoystickF18, MODE_EXCLUDED);
-    Configure(&LMFD, MODE_EXCLUDED);
-    Configure(&RMFD, MODE_EXCLUDED);
-    Configure(&HCougar, MODE_EXCLUDED);
-    Configure(&T16000, MODE_EXCLUDED);
-    Configure(&T16000L, MODE_EXCLUDED);
-    Configure(&TWCSThrottle, MODE_EXCLUDED);
-    Configure(&TFRPRudder, MODE_EXCLUDED);
-    Configure(&TFRPHARudder, MODE_EXCLUDED);
-    Configure(&A320Pilot, MODE_EXCLUDED);
-    Configure(&A320Copilot, MODE_EXCLUDED);
-    Configure(&TCAQuadrant12, MODE_EXCLUDED);
-    Configure(&TCAQuadrant34, MODE_EXCLUDED);
-    Configure(&TCAQBoeing12, MODE_EXCLUDED);
-    Configure(&TCAQBoeing34, MODE_EXCLUDED);
-    Configure(&TCAYokeBoeing, MODE_EXCLUDED);
-
-    Configure(&ViperTQS, MODE_KEEPENABLED);
-    //Configure(&ViperTQS, MODE_EXCLUDED);
-    Configure(&ViperBBox, MODE_EXCLUDED);
-    
-    // TODO determine which Viper device is connected
-    // and set a device variable so that both can be
-    // supported without modifying the code.
-
-    Configure(&TCASidestickXPilot, MODE_EXCLUDED);
+    // Excluded devices
+    Configure(&Joystick,             MODE_EXCLUDED);
+    Configure(&JoystickF18,          MODE_EXCLUDED);
+    Configure(&LMFD,                 MODE_EXCLUDED);
+    Configure(&RMFD,                 MODE_EXCLUDED);
+    Configure(&HCougar,              MODE_EXCLUDED);
+    Configure(&T16000,               MODE_EXCLUDED);
+    Configure(&T16000L,              MODE_EXCLUDED);
+    Configure(&TWCSThrottle,         MODE_EXCLUDED);
+    Configure(&TFRPRudder,           MODE_EXCLUDED);
+    Configure(&TFRPHARudder,         MODE_EXCLUDED);
+    Configure(&A320Pilot,            MODE_EXCLUDED);
+    Configure(&A320Copilot,          MODE_EXCLUDED);
+    Configure(&TCAQuadrant12,        MODE_EXCLUDED);
+    Configure(&TCAQuadrant34,        MODE_EXCLUDED);
+    Configure(&TCAQBoeing12,         MODE_EXCLUDED);
+    Configure(&TCAQBoeing34,         MODE_EXCLUDED);
+    Configure(&TCAYokeBoeing,        MODE_EXCLUDED);
+    Configure(&TCASidestickXPilot,   MODE_EXCLUDED);
     Configure(&TCASidestickXCopilot, MODE_EXCLUDED);
-    //Configure(&FarmStickRight, MODE_EXCLUDED);
-    //Configure(&FarmStickLeft, MODE_EXCLUDED);
+    //Configure(&FarmStickRight,       MODE_EXCLUDED);
+    //Configure(&FarmStickLeft,        MODE_EXCLUDED);
+
+    // Devices enabled for use in the script. All axis and
+    // buttons pass through to Windows unaffected.
+    Configure(&ViperTQS,             MODE_KEEPENABLED);
+    Configure(&ViperBBox,            MODE_KEEPENABLED);
+    Configure(&Throttle,             MODE_KEEPENABLED);
 
     if(Init(&EventHandle)) return 1;
 
@@ -92,13 +56,15 @@ int main()
     SetKBLayout(KB_ENG);
     SetShiftButton(0, 0, 0, 0, 0, 0);
 
-    ResetLeds();
+    reset_leds();
 }
 
 int EventHandle(int type, alias o, int x)
 {
     DefaultMapping(&o, x);
 }
+
+int aircraft = AIRCRAFT_UNDEFINED;
 
 int TCPCallback(int buf, int size)
 {
@@ -113,170 +79,27 @@ int TCPCallback(int buf, int size)
     printf("%s : %d bytes received\xa", &packet_string, size);
 
     if (size == 0) return 0;
-    
+
     if (packet[0] == 'q') // simulation exit
     {
-        ResetLeds();
+        reset_leds();
     }
     else if (packet[0] == 'r') // reset led states
     {
-        ResetLeds();
+        reset_leds();
     }
     else if (packet[0] == 'm')
     {
         // read the aircraft type
-        
-        // TODO for future expansion of other aircraft and throttle controllers
+        aircraft = get_aircraft( &packet_string );
     }
     else if (packet[0] == 'u') // update status of lamps
     {
-        SetLedStatus( packet[1]  - '0',
-                      packet[2]  - '0',
-                      packet[3]  - '0',
-                      packet[4]  - '0',
-                      packet[5]  - '0',
-                      packet[6]  - '0',
-                      packet[7]  - '0',
-                      packet[8]  - '0',
-                      packet[9]  - '0',
-                      packet[10] - '0',
-                      packet[11] - '0' );
-    }
-}
-
-int ResetLeds()
-{
-    SetLED(&ViperTQS, LED_GEAR_NOSE,         LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_GEAR_LEFT,         LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_GEAR_RIGHT,        LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_GEAR_WARNING,      LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_RWR_SEARCH,        LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_RWR_A_POWER,       LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
-    SetLED(&ViperTQS, LED_RWR_SYSTEM_POWER,  LED_STATE_OFF);
-}
-
-int SetLedStatus
-(
-    byte gear_nose_status,
-    byte gear_left_status,
-    byte gear_right_status,
-    byte gear_warning_status,
-    byte rwr_search_status,
-    byte rwr_activity_status,
-    byte rwr_a_power_status,
-    byte rwr_alt_low_status,
-    byte rwr_alt_status,
-    byte rwr_system_power_status,
-    byte speed_brake_position
-)
-{
-    SetLED(&ViperTQS, LED_GEAR_NOSE,         gear_nose_status);
-    SetLED(&ViperTQS, LED_GEAR_LEFT,         gear_left_status);
-    SetLED(&ViperTQS, LED_GEAR_RIGHT,        gear_right_status);
-    SetLED(&ViperTQS, LED_GEAR_WARNING,      gear_warning_status);
-
-    SetLED(&ViperTQS, LED_RWR_SEARCH,        rwr_search_status);
-    SetLED(&ViperTQS, LED_RWR_A_POWER,       rwr_activity_status);
-
-    // Thrustmaster limitation for ACT/PWR indication - only one LED.
-    // Power should be lit when rwr_system_power_status is on and A
-    // should be light amber when rwr_activity_status is on.
-    // One compromise would be to light the LED when rwr_system_power_status
-    // is on and flash the LED if rwr_system_power_status is on and
-    // rwr_activity_status is also on.
-//    SetLED(&ViperTQS, LED_RWR_A_POWER,       rwr_a_power_status);
-
-    if (rwr_alt_low_status == 1)
-    {
-        SetLED(&ViperTQS, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
-        SetLED(&ViperTQS, LED_RWR_LOW_ALT_RED,   rwr_alt_low_status);
-    }
-    else
-    {
-        SetLED(&ViperTQS, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
-        SetLED(&ViperTQS, LED_RWR_LOW_ALT_GREEN, rwr_alt_status);
-    }
-
-    SetLED(&ViperTQS, LED_RWR_SYSTEM_POWER,  rwr_system_power_status);
-
-    // Speed brake position indication
-    SetLED(&ViperTQS, LED_USER_LEFT_1, (speed_brake_position >= 1));
-    SetLED(&ViperTQS, LED_USER_LEFT_2, (speed_brake_position >= 2));
-    SetLED(&ViperTQS, LED_USER_LEFT_3, (speed_brake_position >= 3));
-    SetLED(&ViperTQS, LED_USER_LEFT_4, (speed_brake_position >= 4));
-    SetLED(&ViperTQS, LED_USER_LEFT_5, (speed_brake_position >= 5));
-}
-
-int flash_led = 0;
-
-int SetLED(alias dev, int led_index, int value)
-{
-    int i;
-        
-    if (value == 2)
-    {
-        // flash led
-        if ((led_index == LED_RWR_SEARCH) & (flash_led == 0))
-        {
-            flash_led = 1;
-            start_led_flash_loop();
-        }
-    }
-    else
-    {
-        if ((led_index == LED_RWR_SEARCH) & (flash_led == 1))
-        {
-            flash_led = 0;
-        }
-
-        // turn led on or off
-
-        // LEDV commands need to be sent multiple times to be certain they are executed on the device
-        i = 0; while (i<3)
-        {
-            ActKey(PULSE+KEYON+LEDV( &dev, led_index, value ));
-            i = i+1;
-        }
-    }
-}
-
-define FLASH_INTERVAL 250
-
-int rwr_search_led_next_state;
-
-int start_led_flash_loop()
-{
-    // FIRST CALL .. ON SOME EVENT
-    rwr_search_led_next_state = LED_STATE_OFF;
-    handle_flash_cycle(0);
-}
-
-int handle_flash_cycle(int cycle_num)
-{
-    int i;
-
-    if (flash_led == 1)
-    {
-        // LEDV commands need to be sent multiple times to be certain they are executed on the device
-        i = 0; while (i<3)
-        {
-            ActKey(PULSE+KEYON+LEDV( &ViperTQS, LED_RWR_SEARCH, rwr_search_led_next_state ));
-            i = i+1;
-        }
-
-        // set next state of flashing led
-        if ( rwr_search_led_next_state == LED_STATE_ON)
-        {
-            rwr_search_led_next_state = LED_STATE_OFF;
-        }
-        else
-        {
-            rwr_search_led_next_state = LED_STATE_ON;
-        }
-
-        // NEXT CYCLE LOOP
-        DeferCall(FLASH_INTERVAL, &handle_flash_cycle, cycle_num + 1);
+        if (aircraft == F_16C_50)      set_led_status( &packet );
+        if (aircraft == A_10C)         set_speed_brake_leds( char_to_int(packet[1]) );
+        if (aircraft == A_10C_2)       set_speed_brake_leds( char_to_int(packet[1]) );
+        if (aircraft == FA_18C_HORNET) set_speed_brake_leds( char_to_int(packet[1]) );
+        if (aircraft == SU_25T)        set_speed_brake_leds( char_to_int(packet[1]) );
+        if (aircraft == SU_33)         set_speed_brake_leds( char_to_int(packet[1]) );
     }
 }

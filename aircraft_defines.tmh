@@ -1,0 +1,27 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- aircraft_defines.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- Aircraft definitions.
+  --
+  -- Author: slughead
+  -- Date: 24/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+define AIRCRAFT_UNDEFINED 0
+define A_10C              101 // A-10C
+define A_10C_2            102 // A-10C_2
+define F_16C_50           103 // F-16C_50
+define F_16CM_50          103
+define FA_18C_HORNET      104 // FA-18C_hornet
+
+define SU_25T             120 // Su-25T
+define SU_33              121 // Su-33
+
+define SPITFIRE_LF_MKIX   200 // SpitfireLFMkIX
+define TF_51D             201 // TF-51D
+
+define AH_64D_BLK_II      300 // AH-64D_BLK_II

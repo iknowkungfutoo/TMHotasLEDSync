@@ -1,0 +1,29 @@
+
+/*-------------------------------------------------------------------------------
+  --
+  -- viper_utils.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- Utility functions for Thrustmaster Viper Mission Pack and Panel
+  --
+  -- Author: slughead
+  -- Date: 24/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+int get_viper_device()
+{
+    int get_viper_device = &joy0;
+
+    if (&ViperTQS != &joy0)
+    {
+        get_viper_device = &ViperTQS;
+    }
+    else if (&ViperBBox != &joy0)
+    {
+        get_viper_device = &ViperBBox;
+    }
+
+    return get_viper_device;
+}

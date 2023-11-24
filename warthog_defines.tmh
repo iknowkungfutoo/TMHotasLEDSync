@@ -1,0 +1,19 @@
+
+/*-------------------------------------------------------------------------------
+  --
+  -- warthog_defines.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- Thrustmaster Warthog definitions.
+  --
+  -- Author: slughead
+  -- Date: 24/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+define WH_LED1 1
+define WH_LED2 2
+define WH_LED3 3
+define WH_LED4 4
+define WH_LED5 5

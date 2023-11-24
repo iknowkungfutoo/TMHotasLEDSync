@@ -1,0 +1,46 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- viper_defines.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- Thrustmaster Viper Mission Pack / Panel definitions.
+  --
+  -- Author: slughead
+  -- Date: 24/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+// ViperTQS/BBox LED options:
+//
+// GEAR NOSE    (OFF/GREEN/RED/YELLOW/BLUE/LBLUE/PURPLE/WHITE)
+// GEAR LEFT    (OFF/GREEN/RED/YELLOW/BLUE/LBLUE/PURPLE/WHITE)
+// GEAR RIGHT   (OFF/GREEN/RED/YELLOW/BLUE/LBLUE/PURPLE/WHITE)
+// GEAR WARNING (OFF/RED)
+// SEARCH       (OFF/GREEN)
+// A POWER      (OFF/GREEN)
+// LOW ALT      (OFF/RED)
+// LOW ALT      (OFF/GREEN)
+// SYSTEM POWER (OFF/GREEN)
+
+define LED_GEAR_NOSE         1
+define LED_GEAR_LEFT         2
+define LED_GEAR_RIGHT        3
+define LED_GEAR_WARNING      19
+define LED_RWR_SEARCH        14
+define LED_RWR_A_POWER       15
+define LED_RWR_LOW_ALT_RED   16
+define LED_RWR_LOW_ALT_GREEN 17
+define LED_RWR_SYSTEM_POWER  18
+
+define LED_USER_LEFT_1 12
+define LED_USER_LEFT_2 10
+define LED_USER_LEFT_3 8
+define LED_USER_LEFT_4 6
+define LED_USER_LEFT_5 4
+
+define LED_USER_RIGHT_1 13
+define LED_USER_RIGHT_2 11
+define LED_USER_RIGHT_3 9
+define LED_USER_RIGHT_4 7
+define LED_USER_RIGHT_5 5

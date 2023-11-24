@@ -1,0 +1,24 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- warthog_utils.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- Utility functions for Thrustmaster Warthog
+  --
+  -- Author: slughead
+  -- Date: 24/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+//include "warthog_defines.tmh"
+
+int get_tm_warthog_led_id( int id )
+{
+    if (id == WH_LED1)      return 0x300000;
+    else if (id == WH_LED2) return 0x30000;
+    else if (id == WH_LED3) return 0x3000;
+    else if (id == WH_LED4) return 0x300;
+    else if (id == WH_LED5) return 0x30;
+    else return 0;
+}
