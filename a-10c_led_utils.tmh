@@ -1,0 +1,48 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- a-10c_led_utils.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- A-10C/A-10C2 specific utility functions to program the state of LEDs
+  -- on Thrustmaster Warthog Throttle.
+  --
+  -- Author: slughead
+  -- Date: 26/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+//include "warthog_defines.tmh"
+//include "warthog_utils.tmh"
+
+int set_a_10c_led_status( alias led_states )
+{
+    int speed_brake_position = char_to_int(led_states[1]);
+    int console_light        = char_to_int(led_states[2]);
+
+    if (&Throttle != &joy0)
+    {
+        set_a_10c_speed_brake_leds( speed_brake_position );
+        set_backlight(&Throttle, console_light);
+    }
+}
+
+int set_a_10c_speed_brake_leds(int speed_brake_position)
+{
+    if (&Throttle != &joy0)
+    {
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 1));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 2));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 3));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 4));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5));
+    }
+}
+
+int set_backlight(int device, int intensity)
+{
+    if (device == &Throttle)
+    {
+        ActKey(PULSE+KEYON+LED(device, LED_INTENSITY, intensity * 51));
+    }
+}

@@ -1,0 +1,82 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- a-10c_led_utils.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- F-16C specific utility functions to program the state of LEDs
+  -- on Thrustmaster Viper Mission Pack / Panel.
+  --
+  -- Author: slughead
+  -- Date: 26/11/2023
+  --
+  ------------------------------------------------------------------------------*/
+
+//include "viper_defines.tmh"
+//include "viper_utils.tmh"
+
+
+int set_f_16c_led_status( alias led_states )
+{
+    int gear_nose_status        = char_to_int(led_states[1]);
+    int gear_left_status        = char_to_int(led_states[2]);
+    int gear_right_status       = char_to_int(led_states[3]);
+    int gear_warning_status     = char_to_int(led_states[4]);
+    int rwr_search_status       = char_to_int(led_states[5]);
+    int rwr_activity_status     = char_to_int(led_states[6]);
+    int rwr_a_power_status      = char_to_int(led_states[7]);
+    int rwr_alt_low_status      = char_to_int(led_states[8]);
+    int rwr_alt_status          = char_to_int(led_states[9]);
+    int rwr_system_power_status = char_to_int(led_states[10]);
+    int speed_brake_position    = char_to_int(led_states[11]);
+
+    int device = get_viper_device();
+
+    if (device != &joy0)
+    {
+        set_led(device, LED_GEAR_NOSE,         gear_nose_status);
+        set_led(device, LED_GEAR_LEFT,         gear_left_status);
+        set_led(device, LED_GEAR_RIGHT,        gear_right_status);
+        set_led(device, LED_GEAR_WARNING,      gear_warning_status);
+
+        set_led(device, LED_RWR_SEARCH,        rwr_search_status);
+        set_led(device, LED_RWR_A_POWER,       rwr_activity_status);
+
+        // Thrustmaster limitation for ACT/PWR indication - only one LED.
+        // Power should be lit when rwr_system_power_status is on and A
+        // should be light amber when rwr_activity_status is on.
+        // One compromise would be to light the LED when rwr_system_power_status
+        // is on and flash the LED if rwr_system_power_status is on and
+        // rwr_activity_status is also on.
+        //set_led(device, LED_RWR_A_POWER,       rwr_a_power_status);
+
+        if (rwr_alt_low_status == 1)
+        {
+            set_led(device, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
+            set_led(device, LED_RWR_LOW_ALT_RED,   rwr_alt_low_status);
+        }
+        else
+        {
+            set_led(device, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
+            set_led(device, LED_RWR_LOW_ALT_GREEN, rwr_alt_status);
+        }
+
+        set_led(device, LED_RWR_SYSTEM_POWER,  rwr_system_power_status);
+    }
+
+    set_f_16c_speed_brake_leds(speed_brake_position);
+}
+
+int set_f_16c_speed_brake_leds(int speed_brake_position)
+{
+    int device = get_viper_device();
+
+    if (device != &joy0)
+    {
+        set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 1));
+        set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 2));
+        set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 3));
+        set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 4));
+        set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 5));
+    }
+}

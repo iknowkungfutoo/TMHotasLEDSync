@@ -8,7 +8,7 @@
   -- and Warthog devices.
   --
   -- Author: slughead
-  -- Date: 24/11/2023
+  -- Date: 26/11/2023
   --
   ------------------------------------------------------------------------------*/
 
@@ -73,84 +73,16 @@ int reset_leds()
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), LED_STATE_OFF);
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), LED_STATE_OFF);
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), LED_STATE_OFF);
+
+        set_backlight(&Throttle, 3);
     }
-}
-
-int set_led_status( alias led_states )
-{
-    int gear_nose_status        = char_to_int(led_states[1]);
-    int gear_left_status        = char_to_int(led_states[2]);
-    int gear_right_status       = char_to_int(led_states[3]);
-    int gear_warning_status     = char_to_int(led_states[4]);
-    int rwr_search_status       = char_to_int(led_states[5]);
-    int rwr_activity_status     = char_to_int(led_states[6]);
-    int rwr_a_power_status      = char_to_int(led_states[7]);
-    int rwr_alt_low_status      = char_to_int(led_states[8]);
-    int rwr_alt_status          = char_to_int(led_states[9]);
-    int rwr_system_power_status = char_to_int(led_states[10]);
-    int speed_brake_position    = char_to_int(led_states[11]);
-
-    int device = get_viper_device();
-
-    printf("SetLedStatus:   device:    %d\xa", device);
-
-    if (device != &joy0)
-    {
-        set_led(device, LED_GEAR_NOSE,         gear_nose_status);
-        set_led(device, LED_GEAR_LEFT,         gear_left_status);
-        set_led(device, LED_GEAR_RIGHT,        gear_right_status);
-        set_led(device, LED_GEAR_WARNING,      gear_warning_status);
-
-        set_led(device, LED_RWR_SEARCH,        rwr_search_status);
-        set_led(device, LED_RWR_A_POWER,       rwr_activity_status);
-
-        // Thrustmaster limitation for ACT/PWR indication - only one LED.
-        // Power should be lit when rwr_system_power_status is on and A
-        // should be light amber when rwr_activity_status is on.
-        // One compromise would be to light the LED when rwr_system_power_status
-        // is on and flash the LED if rwr_system_power_status is on and
-        // rwr_activity_status is also on.
-        //set_led(device, LED_RWR_A_POWER,       rwr_a_power_status);
-
-        if (rwr_alt_low_status == 1)
-        {
-            set_led(device, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
-            set_led(device, LED_RWR_LOW_ALT_RED,   rwr_alt_low_status);
-        }
-        else
-        {
-            set_led(device, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
-            set_led(device, LED_RWR_LOW_ALT_GREEN, rwr_alt_status);
-        }
-
-        set_led(device, LED_RWR_SYSTEM_POWER,  rwr_system_power_status);
-    }
-
-    set_speed_brake_leds(speed_brake_position);
 }
 
 int set_speed_brake_leds(int speed_brake_position)
 {
-    int device;
-
-    if (aircraft == F_16C_50)
-    {
-        device = get_viper_device();
-
-        if (device != &joy0)
-        {
-            set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 1));
-            set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 2));
-            set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 3));
-            set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 4));
-            set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 5));
-        }
-    }
-    else if ( aircraft == A_10C |
-              aircraft == A_10C_2 |
-              aircraft == FA_18C_HORNET |
-              aircraft == SU_25T |
-              aircraft == SU_33 )
+    if ( aircraft == FA_18C_HORNET |
+         aircraft == SU_25T |
+         aircraft == SU_33 )
     {
         if (&Throttle != &joy0)
         {
@@ -162,7 +94,6 @@ int set_speed_brake_leds(int speed_brake_position)
         }
     }
 }
-
 
 // TODO led flashing currently does not support individual flashing LEDs
 // and is only supported on ViperTQS/ViperBBox for Search indicator.

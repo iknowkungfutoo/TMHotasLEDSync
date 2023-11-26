@@ -18,12 +18,11 @@ int get_aircraft( alias packet_string )
     int id = AIRCRAFT_UNDEFINED;
 
     char aircraft; Dim(&aircraft, 20);
-
-    printf("%s\xa", &packet_string);
     strsub(&aircraft, &packet_string, 1, strlen(&packet_string)-1);
+    printf("%s\xa", &aircraft);
 
     if (strcmp(&aircraft, "A-10C") == 0)         id = A_10C;
-    if (strcmp(&aircraft, "A-10C_2") == 0)       id = A_10C;
+    if (strcmp(&aircraft, "A-10C_2") == 0)       id = A_10C_2;
     if (strcmp(&aircraft, "F-16C_50") == 0)      id = F_16C_50;
     if (strcmp(&aircraft, "FA-18C_hornet") == 0) id = FA_18C_HORNET;
     if (strcmp(&aircraft, "Su-25T") == 0)        id = SU_25T;
