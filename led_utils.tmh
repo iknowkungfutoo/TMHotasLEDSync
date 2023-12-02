@@ -8,7 +8,7 @@
   -- and Warthog devices.
   --
   -- Author: slughead
-  -- Date: 26/11/2023
+  -- Date: 2/12/2023
   --
   ------------------------------------------------------------------------------*/
 
@@ -74,8 +74,13 @@ int reset_leds()
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), LED_STATE_OFF);
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), LED_STATE_OFF);
 
-        set_backlight(&Throttle, 3);
+        set_backlight( 3 );
     }
+}
+
+int set_backlight( int intensity )
+{
+    ActKey(PULSE+KEYON+LED(&Throttle, LED_INTENSITY, intensity * 51));
 }
 
 int set_speed_brake_leds(int speed_brake_position)

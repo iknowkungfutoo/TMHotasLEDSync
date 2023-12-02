@@ -1,10 +1,10 @@
 /*-------------------------------------------------------------------------------
   --
-  -- a-10c_led_utils.tmh
+  -- fa-18c_hornet_led_utils.tmh
   --
   -- Use at own risk without warranty.
   --
-  -- A-10C/A-10C2 specific utility functions to program the state of LEDs
+  -- F/A-18C Hornet specific utility functions to program the state of LEDs
   -- on Thrustmaster Warthog Throttle.
   --
   -- Author: slughead
@@ -15,19 +15,19 @@
 //include "warthog_defines.tmh"
 //include "warthog_utils.tmh"
 
-int set_a_10c_led_status( alias led_states )
+int set_fa_18c_hornet_led_status( alias led_states )
 {
     int speed_brake_position = char_to_int(led_states[1]);
     int console_light        = char_to_int(led_states[2]);
 
     if (&Throttle != &joy0)
     {
-        set_a_10c_speed_brake_leds( speed_brake_position );
-        set_a_10c_backlight( console_light) ;
+        set_fa_18c_speed_brake_leds( speed_brake_position );
+        set_fa_18c_hornet_backlight( console_light) ;
     }
 }
 
-int set_a_10c_speed_brake_leds(int speed_brake_position)
+int set_fa_18c_speed_brake_leds(int speed_brake_position)
 {
     if (&Throttle != &joy0)
     {
@@ -39,7 +39,8 @@ int set_a_10c_speed_brake_leds(int speed_brake_position)
     }
 }
 
-int set_a_10c_backlight( int intensity )
+int set_fa_18c_hornet_backlight( int intensity )
 {
     set_backlight( intensity );
+    //ActKey(PULSE+KEYON+LED(&Throttle, LED_INTENSITY, intensity * 51));
 }

@@ -11,7 +11,7 @@
   -- various lamps and console lighting of a variety of aircraft.
   --
   -- Author: slughead
-  -- Date: 26/11/2023
+  -- Date: 2/12/2023
   --
   ------------------------------------------------------------------------------*/
 
@@ -20,8 +20,9 @@ include "aircraft_utils.tmh"
 include "led_utils.tmh"
 include "a-10c_led_utils.tmh"
 include "f-16c_led_utils.tmh"
+include "fa-18c_hornet_led_utils.tmh"
 
-define VERSION "1.0.2"
+define VERSION "1.0.3"
 
 define DEBUG 0
 
@@ -116,7 +117,7 @@ int TCPCallback(int buf, int size)
         if (aircraft == F_16C_50)      set_f_16c_led_status( &packet );
         if (aircraft == A_10C)         set_a_10c_led_status( &packet );
         if (aircraft == A_10C_2)       set_a_10c_led_status( &packet );
-        if (aircraft == FA_18C_HORNET) set_speed_brake_leds( char_to_int(packet[1]) );
+        if (aircraft == FA_18C_HORNET) set_fa_18c_hornet_led_status( &packet );
         if (aircraft == SU_25T)        set_speed_brake_leds( char_to_int(packet[1]) );
         if (aircraft == SU_33)         set_speed_brake_leds( char_to_int(packet[1]) );
     }
