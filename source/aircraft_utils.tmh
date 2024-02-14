@@ -27,6 +27,7 @@ int get_aircraft( alias packet_string )
     if (strcmp(&aircraft, "FA-18C_hornet") == 0) id = FA_18C_HORNET;
     if (strcmp(&aircraft, "Su-25T") == 0)        id = SU_25T;
     if (strcmp(&aircraft, "Su-33") == 0)         id = SU_33;
+    if (strcmp(&aircraft, "JF-17") == 0)         id = JF_17;
 
     return id;
 }

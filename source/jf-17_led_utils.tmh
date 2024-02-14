@@ -1,0 +1,46 @@
+/*-------------------------------------------------------------------------------
+  --
+  -- jf_17_led_utils.tmh
+  --
+  -- Use at own risk without warranty.
+  --
+  -- JF-17 specific utility functions to program the state of LEDs
+  -- on Thrustmaster Warthog Throttle.
+  --
+  -- Author: Tigershark2005
+  -- Date: 6/2/2024
+  --
+  ------------------------------------------------------------------------------*/
+
+//include "viper_defines.tmh"
+//include "viper_utils.tmh"
+
+int set_jf_17_led_status( alias led_states )
+{
+  int gear_nose_status        = char_to_int(led_states[1]);
+  int gear_left_status        = char_to_int(led_states[2]);
+  int gear_right_status       = char_to_int(led_states[3]);
+  int gear_warning_status     = char_to_int(led_states[4]);
+  int gear_transit_status     = char_to_int(led_states[5]);
+  int master_warning_status   = char_to_int(led_states[6]);
+
+  if (gear_transit_status == 1)
+  {
+    gear_nose_status = LED_STATE_RED;
+  }
+
+  if (master_warning_status == 1)
+  {
+    gear_warning_status = !gear_warning_status;
+  }
+
+  int device = get_viper_device();
+
+  if (device != &joy0)
+  {
+    set_led(device, LED_GEAR_NOSE,         gear_nose_status);
+    set_led(device, LED_GEAR_LEFT,         gear_left_status);
+    set_led(device, LED_GEAR_RIGHT,        gear_right_status);
+    set_led(device, LED_GEAR_WARNING,      gear_warning_status);
+  }
+}
