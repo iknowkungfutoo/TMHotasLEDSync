@@ -21,8 +21,9 @@ include "led_utils.tmh"
 include "a-10c_led_utils.tmh"
 include "f-16c_led_utils.tmh"
 include "fa-18c_hornet_led_utils.tmh"
+include "jf-17_led_utils.tmh"
 
-define VERSION "1.0.3"
+define VERSION "1.0.4"
 
 define DEBUG 0
 
@@ -120,5 +121,6 @@ int TCPCallback(int buf, int size)
         if (aircraft == FA_18C_HORNET) set_fa_18c_hornet_led_status( &packet );
         if (aircraft == SU_25T)        set_speed_brake_leds( char_to_int(packet[1]) );
         if (aircraft == SU_33)         set_speed_brake_leds( char_to_int(packet[1]) );
+        if (aircraft == JF_17)         set_jf_17_led_status ( &packet );
     }
 }
