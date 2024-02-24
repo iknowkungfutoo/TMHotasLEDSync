@@ -42,44 +42,72 @@ int char_to_int( char c )
     return c - '0';
 }
 
+int set_all_viper_leds( int led_state )
+{
+    int viper_device = get_viper_device();
+
+    set_led(viper_device, LED_GEAR_NOSE,         led_state);
+    set_led(viper_device, LED_GEAR_LEFT,         led_state);
+    set_led(viper_device, LED_GEAR_RIGHT,        led_state);
+    set_led(viper_device, LED_GEAR_WARNING,      led_state);
+    set_led(viper_device, LED_RWR_SEARCH,        led_state);
+    set_led(viper_device, LED_RWR_A_POWER,       led_state);
+    set_led(viper_device, LED_RWR_LOW_ALT_GREEN, led_state);
+    set_led(viper_device, LED_RWR_LOW_ALT_RED,   led_state);
+    set_led(viper_device, LED_RWR_SYSTEM_POWER,  led_state);
+
+    set_led(viper_device, LED_USER_LEFT_1,       led_state);
+    set_led(viper_device, LED_USER_LEFT_2,       led_state);
+    set_led(viper_device, LED_USER_LEFT_3,       led_state);
+    set_led(viper_device, LED_USER_LEFT_4,       led_state);
+    set_led(viper_device, LED_USER_LEFT_5,       led_state);
+
+    set_led(viper_device, LED_USER_RIGHT_1,      led_state);
+    set_led(viper_device, LED_USER_RIGHT_2,      led_state);
+    set_led(viper_device, LED_USER_RIGHT_3,      led_state);
+    set_led(viper_device, LED_USER_RIGHT_4,      led_state);
+    set_led(viper_device, LED_USER_RIGHT_5,      led_state);
+}
+
+int set_all_warthog_leds( int led_state )
+{
+    set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), led_state);
+    set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), led_state);
+    set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), led_state);
+    set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), led_state);
+    set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), led_state);
+}
+
 int reset_leds()
 {
     // Viper Mission Pack or Viper Panel - assuming no one would have both!
     int viper_device = get_viper_device();
+    int i = 0;
 
     if (viper_device != &joy0)
     {
-        set_led(viper_device, LED_GEAR_NOSE,         LED_STATE_OFF);
-        set_led(viper_device, LED_GEAR_LEFT,         LED_STATE_OFF);
-        set_led(viper_device, LED_GEAR_RIGHT,        LED_STATE_OFF);
-        set_led(viper_device, LED_GEAR_WARNING,      LED_STATE_OFF);
-        set_led(viper_device, LED_RWR_SEARCH,        LED_STATE_OFF);
-        set_led(viper_device, LED_RWR_A_POWER,       LED_STATE_OFF);
-        set_led(viper_device, LED_RWR_LOW_ALT_GREEN, LED_STATE_OFF);
-        set_led(viper_device, LED_RWR_LOW_ALT_RED,   LED_STATE_OFF);
-        set_led(viper_device, LED_RWR_SYSTEM_POWER,  LED_STATE_OFF);
-
-        set_led(viper_device, LED_USER_LEFT_1,       LED_STATE_OFF);
-        set_led(viper_device, LED_USER_LEFT_2,       LED_STATE_OFF);
-        set_led(viper_device, LED_USER_LEFT_3,       LED_STATE_OFF);
-        set_led(viper_device, LED_USER_LEFT_4,       LED_STATE_OFF);
-        set_led(viper_device, LED_USER_LEFT_5,       LED_STATE_OFF);
-
-        set_led(viper_device, LED_USER_RIGHT_1,      LED_STATE_OFF);
-        set_led(viper_device, LED_USER_RIGHT_2,      LED_STATE_OFF);
-        set_led(viper_device, LED_USER_RIGHT_3,      LED_STATE_OFF);
-        set_led(viper_device, LED_USER_RIGHT_4,      LED_STATE_OFF);
-        set_led(viper_device, LED_USER_RIGHT_5,      LED_STATE_OFF);
+        do
+        {
+            set_all_viper_leds(LED_STATE_OFF);
+            set_all_viper_leds(LED_STATE_ON);
+            set_all_viper_leds(LED_STATE_OFF);
+            i=i+1;
+        }
+        while(i<3);
     }
 
     // Warthog Throttle
     if (&Throttle != &joy0)
     {
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), LED_STATE_OFF);
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), LED_STATE_OFF);
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), LED_STATE_OFF);
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), LED_STATE_OFF);
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), LED_STATE_OFF);
+        i = 0;
+        do
+        {
+            set_all_warthog_leds( LED_STATE_OFF );
+            set_all_warthog_leds( LED_STATE_ON );
+            set_all_warthog_leds( LED_STATE_OFF );
+            i = i + 1;
+        }
+        while (i<3);
 
         set_backlight( 3 );
     }
