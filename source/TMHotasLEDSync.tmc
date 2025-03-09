@@ -11,7 +11,7 @@
   -- various lamps and console lighting of a variety of aircraft.
   --
   -- Author: slughead
-  -- Date: 2/12/2023
+  -- Date: 9/03/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -23,7 +23,7 @@ include "f-16c_led_utils.tmh"
 include "fa-18c_hornet_led_utils.tmh"
 include "jf-17_led_utils.tmh"
 
-define VERSION "1.0.4"
+define VERSION "1.0.5"
 
 define DEBUG 0
 
@@ -34,6 +34,8 @@ int main()
     // Excluded devices
     Configure(&Joystick,             MODE_EXCLUDED);
     Configure(&JoystickF18,          MODE_EXCLUDED);
+    Configure(&AVA_F16,              MODE_EXCLUDED);
+    Configure(&AVA_F18,              MODE_EXCLUDED);
     Configure(&LMFD,                 MODE_EXCLUDED);
     Configure(&RMFD,                 MODE_EXCLUDED);
     Configure(&HCougar,              MODE_EXCLUDED);
