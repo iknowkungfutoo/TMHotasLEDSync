@@ -28,7 +28,13 @@ int set_f_16c_led_status( alias led_states )
     int rwr_alt_low_status      = char_to_int(led_states[8]);
     int rwr_alt_status          = char_to_int(led_states[9]);
     int rwr_system_power_status = char_to_int(led_states[10]);
-    int speed_brake_position    = char_to_int(led_states[11]);
+    int jfs_run_status          = char_to_int(led_states[11]);
+    int main_gen_status         = char_to_int(led_states[12]);
+    int stby_gen_status         = char_to_int(led_states[13]);
+    int flcs_rly_status         = char_to_int(led_states[14]);
+    int epu_status              = char_to_int(led_states[15]);
+
+    int speed_brake_position    = char_to_int(led_states[16]);
 
     int device = get_viper_device();
 
@@ -62,6 +68,12 @@ int set_f_16c_led_status( alias led_states )
         }
 
         set_led(device, LED_RWR_SYSTEM_POWER,  rwr_system_power_status);
+
+        set_led(device, LED_USER_RIGHT_5, (jfs_run_status == 1));
+        set_led(device, LED_USER_RIGHT_4, (main_gen_status == 1));
+        set_led(device, LED_USER_RIGHT_3, (stby_gen_status == 1));
+        set_led(device, LED_USER_RIGHT_2, (flcs_rly_status == 1));
+        set_led(device, LED_USER_RIGHT_1, (epu_status == 1));
     }
 
     set_f_16c_speed_brake_leds(speed_brake_position);

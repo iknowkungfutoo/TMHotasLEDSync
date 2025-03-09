@@ -17,13 +17,16 @@
 
 int set_fa_18c_hornet_led_status( alias led_states )
 {
-    int speed_brake_position = char_to_int(led_states[1]);
-    int console_light        = char_to_int(led_states[2]);
+    int apu_ready_lamp_status = char_to_int(led_states[1]);
+    int speed_brake_position  = char_to_int(led_states[2]);
+    int console_light         = char_to_int(led_states[3]);
 
     if (&Throttle != &joy0)
     {
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (apu_ready_lamp_status == 1) );
+
         set_fa_18c_speed_brake_leds( speed_brake_position );
-        set_fa_18c_hornet_backlight( console_light) ;
+        set_fa_18c_hornet_backlight( console_light);
     }
 }
 
@@ -35,12 +38,11 @@ int set_fa_18c_speed_brake_leds(int speed_brake_position)
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 2));
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 3));
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 4));
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5));
+        //set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5));
     }
 }
 
 int set_fa_18c_hornet_backlight( int intensity )
 {
     set_backlight( intensity );
-    //ActKey(PULSE+KEYON+LED(&Throttle, LED_INTENSITY, intensity * 51));
 }

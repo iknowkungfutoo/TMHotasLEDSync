@@ -115,13 +115,14 @@ int reset_leds()
 
 int set_backlight( int intensity )
 {
+    if (intensity < 1) intensity = 1; // do not fully turn off the back light or the 5 user LEDs will not illuminate
+
     ActKey(PULSE+KEYON+LED(&Throttle, LED_INTENSITY, intensity * 51));
 }
 
 int set_speed_brake_leds(int speed_brake_position)
 {
-    if ( aircraft == FA_18C_HORNET |
-         aircraft == SU_25T |
+    if ( aircraft == SU_25T |
          aircraft == SU_33 )
     {
         if (&Throttle != &joy0)
