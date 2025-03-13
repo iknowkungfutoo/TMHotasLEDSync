@@ -115,8 +115,6 @@ int reset_leds()
 
 int set_backlight( int intensity )
 {
-    if (intensity < 1) intensity = 1; // do not fully turn off the back light or the 5 user LEDs will not illuminate
-
     ActKey(PULSE+KEYON+LED(&Throttle, LED_INTENSITY, intensity * 51));
 }
 
