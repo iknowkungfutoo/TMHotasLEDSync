@@ -1,4 +1,4 @@
-# What Is TMHoatsLEDSync?
+# What Is TMHotasLEDSync?
 
 With the recent release of the new Thrustmaster Viper Mission Pack and Viper Panel, many users have shared their dismay that the landing gear and other indicators are not working/integrated with DCS. This isn't a fault of the product or Thrustmaster as there are far too many applications, each with their unique style of exposing simulation data. It isn't fair to expect Thrustmaster to support all of those applications and this is where the community fills the gap.
 
