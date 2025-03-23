@@ -8,7 +8,7 @@
   -- and Warthog devices.
   --
   -- Author: slughead
-  -- Date: 2/12/2023
+  -- Date: 23/03/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -149,7 +149,7 @@ int set_led(int device, int led_id, int led_state)
             if (led_id == LED_RWR_SEARCH & flash_led == 0)
             {
                 flash_led = 1;
-                start_led_flash_event_loop();
+                start_led_flash_event_loop( device );
             }
         }
         else
@@ -170,50 +170,93 @@ int set_led(int device, int led_id, int led_state)
     }
     else if (device == &Throttle)
     {
-        if (led_state == LED_STATE_OFF)
+        if (led_state == LED_STATE_FLASH)
         {
-            ActKey(PULSE+KEYON+LED(device, LED_ONOFF, LED_CURRENT-led_id));
+            if (led_id == get_tm_warthog_led_id( WH_LED1 ) & flash_led == 0)
+            {
+                flash_led = 1;
+
+                start_led_flash_event_loop( device );
+            }
         }
         else
         {
-            ActKey(PULSE+KEYON+LED(device, LED_ONOFF, LED_CURRENT+led_id));
+            if (led_id == get_tm_warthog_led_id( WH_LED1 ) & flash_led == 1)
+            {
+                flash_led = 0;
+            }
+
+            // turn led on or off
+            if (led_state == LED_STATE_OFF)
+            {
+                ActKey(PULSE+KEYON+LED(device, LED_ONOFF, LED_CURRENT-led_id));
+            }
+            else
+            {
+                ActKey(PULSE+KEYON+LED(device, LED_ONOFF, LED_CURRENT+led_id));
+            }
         }
     }
 }
 
-int rwr_search_led_next_state;
+int led_next_state;
+int flash_device;
 
-int start_led_flash_event_loop()
+int start_led_flash_event_loop( int device )
 {
     // FIRST CALL .. ON SOME EVENT
-    rwr_search_led_next_state = LED_STATE_OFF;
+    flash_device = device;
+    led_next_state = LED_STATE_OFF;
     handle_flash_cycle(0);
 }
 
 int handle_flash_cycle(int cycle_num)
 {
     int i;
-    int device = get_viper_device();
 
     if (flash_led == 1)
     {
-        if (device == &ViperTQS | device == &ViperBBox)
+        if (flash_device == &ViperTQS | flash_device == &ViperBBox)
         {
             // LEDV commands need to be sent multiple times to be certain they are executed on the device
             i = 0; while (i<3)
             {
-                ActKey(PULSE+KEYON+LEDV( device, LED_RWR_SEARCH, rwr_search_led_next_state ));
+                ActKey(PULSE+KEYON+LEDV( flash_device, LED_RWR_SEARCH, led_next_state ));
                 i = i+1;
             }
 
             // set next state of flashing led
-            if ( rwr_search_led_next_state == LED_STATE_ON)
+            if ( led_next_state == LED_STATE_ON)
             {
-                rwr_search_led_next_state = LED_STATE_OFF;
+                led_next_state = LED_STATE_OFF;
             }
             else
             {
-                rwr_search_led_next_state = LED_STATE_ON;
+                led_next_state = LED_STATE_ON;
+            }
+
+            // NEXT CYCLE LOOP
+            DeferCall(FLASH_INTERVAL, &handle_flash_cycle, cycle_num + 1);
+        }
+        else if (flash_device == &Throttle)
+        {
+            if (led_next_state == LED_STATE_ON)
+            {
+                ActKey(PULSE+KEYON+LED(flash_device, LED_ONOFF, LED_CURRENT + get_tm_warthog_led_id( WH_LED1 )));
+            }
+            else
+            {
+                ActKey(PULSE+KEYON+LED(flash_device, LED_ONOFF, LED_CURRENT - get_tm_warthog_led_id( WH_LED1 )));
+            }
+
+            // set next state of flashing led
+            if ( led_next_state == LED_STATE_ON)
+            {
+                led_next_state = LED_STATE_OFF;
+            }
+            else
+            {
+                led_next_state = LED_STATE_ON;
             }
 
             // NEXT CYCLE LOOP
