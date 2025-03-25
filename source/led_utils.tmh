@@ -86,30 +86,41 @@ int reset_leds()
 
     if (viper_device != &joy0)
     {
-        do
-        {
-            set_all_viper_leds(LED_STATE_OFF);
-            set_all_viper_leds(LED_STATE_ON);
-            set_all_viper_leds(LED_STATE_OFF);
-            i=i+1;
-        }
-        while(i<3);
+        set_all_viper_leds(LED_STATE_OFF);
+        set_all_viper_leds(LED_STATE_ON);
+        Sleep(2000);
+        set_all_viper_leds(LED_STATE_OFF);
     }
 
     // Warthog Throttle
     if (&Throttle != &joy0)
     {
-        i = 0;
-        do
-        {
-            set_all_warthog_leds( LED_STATE_OFF );
-            set_all_warthog_leds( LED_STATE_ON );
-            set_all_warthog_leds( LED_STATE_OFF );
-            i = i + 1;
-        }
-        while (i<3);
-
         set_backlight( 3 );
+
+        set_all_warthog_leds( LED_STATE_OFF );
+        set_all_warthog_leds( LED_STATE_ON );
+        Sleep(2000);
+        set_all_warthog_leds( LED_STATE_OFF );
+
+        set_backlight( 0 );
+    }
+}
+
+int lights_out()
+{
+    int viper_device = get_viper_device();
+    int i = 0;
+
+    if (viper_device != &joy0)
+    {
+        set_all_viper_leds(LED_STATE_OFF);
+    }
+
+    // Warthog Throttle
+    if (&Throttle != &joy0)
+    {
+        set_all_warthog_leds( LED_STATE_OFF );
+        set_backlight( 0 );
     }
 }
 

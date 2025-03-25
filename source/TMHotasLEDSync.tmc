@@ -99,7 +99,7 @@ int TCPCallback(int buf, int size)
 
     if (packet[0] == 'q') // simulation exit
     {
-        reset_leds();
+        lights_out();
     }
     else if (packet[0] == 'r') // reset led states
     {
