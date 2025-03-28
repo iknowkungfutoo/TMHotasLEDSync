@@ -64,7 +64,7 @@ int main()
 
     if(Init(&EventHandle)) return 1;
 
-    RegisterGameCallback(2323, &TCPCallback); // attach TCPCallback procedure to TCP port 1000
+    RegisterGameCallback(29914, &TCPCallback); // attach TCPCallback procedure to TCP port 29914
 
     SetKBRate(32, 50);
     SetKBLayout(KB_ENG);
