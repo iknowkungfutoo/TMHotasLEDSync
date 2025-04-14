@@ -8,14 +8,14 @@
   -- on Thrustmaster Warthog Throttle.
   --
   -- Author: slughead
-  -- Date: 25/03/2025
+  -- Date: 14/04/2025
   --
   ------------------------------------------------------------------------------*/
 
 //include "warthog_defines.tmh"
 //include "warthog_utils.tmh"
 
-int landing_gear_handle_previous_state  = -1;
+int fa_18c_landing_gear_handle_previous_state  = -1;
 
 int set_fa_18c_hornet_led_status( alias led_states )
 {
@@ -32,9 +32,9 @@ int set_fa_18c_hornet_led_status( alias led_states )
 
         set_fa_18c_hornet_backlight( console_light);
 
-        if (landing_gear_handle_previous_state != landing_gear_handle)
+        if (fa_18c_landing_gear_handle_previous_state != landing_gear_handle)
         {
-            landing_gear_handle_previous_state = landing_gear_handle;
+            fa_18c_landing_gear_handle_previous_state = landing_gear_handle;
             set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), landing_gear_handle * LED_STATE_FLASH);
 
             // if landing gear handle is not lit, refresh speed brake position leds

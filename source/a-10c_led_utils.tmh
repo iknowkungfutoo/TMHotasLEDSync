@@ -8,34 +8,53 @@
   -- on Thrustmaster Warthog Throttle.
   --
   -- Author: slughead
-  -- Date: 2/12/2023
+  -- Date: 14/04/2025
   --
   ------------------------------------------------------------------------------*/
 
 //include "warthog_defines.tmh"
 //include "warthog_utils.tmh"
 
+int a_10c_landing_gear_handle_previous_state  = -1;
+
 int set_a_10c_led_status( alias led_states )
 {
-    int speed_brake_position = char_to_int(led_states[1]);
-    int console_light        = char_to_int(led_states[2]);
+    int canopy_unlocked      = char_to_int(led_states[1]);
+    int speed_brake_position = char_to_int(led_states[2]);
+    int console_light        = char_to_int(led_states[3]);
+    int landing_gear_handle  = char_to_int(led_states[4]);
 
     if (&Throttle != &joy0)
     {
-        set_a_10c_speed_brake_leds( speed_brake_position );
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (canopy_unlocked == 1) );
+
+        set_a_10c_speed_brake_leds( speed_brake_position, (landing_gear_handle == 1) );
+
         set_a_10c_backlight( console_light) ;
+
+        if (a_10c_landing_gear_handle_previous_state != landing_gear_handle)
+        {
+            a_10c_landing_gear_handle_previous_state = landing_gear_handle;
+            set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), landing_gear_handle * LED_STATE_FLASH);
+
+            // if landing gear handle is not lit, refresh speed brake position leds
+            if (landing_gear_handle == 0)
+            {
+                set_a_10c_speed_brake_leds( speed_brake_position, (landing_gear_handle == 1) );
+            }
+        }
     }
 }
 
-int set_a_10c_speed_brake_leds(int speed_brake_position)
+int set_a_10c_speed_brake_leds(int speed_brake_position, int led1_reserved)
 {
     if (&Throttle != &joy0)
     {
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 1));
+        if (led1_reserved != 1) set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 1));
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 2));
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 3));
         set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 4));
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5));
+        //set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5)); // WH_LED5 reserved for canopy_unlocked light.
     }
 }
 
