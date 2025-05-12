@@ -8,7 +8,7 @@
   -- and Warthog devices.
   --
   -- Author: slughead
-  -- Date: 23/03/2025
+  -- Date: 12/05/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -104,6 +104,29 @@ int reset_leds()
 
         set_backlight( 0 );
     }
+}
+
+int warthog_lights_on()
+{
+    // Warthog Throttle
+    if (&Throttle != &joy0)
+    {
+        set_all_warthog_leds( LED_STATE_ON );
+        set_backlight( 3 );
+    }
+}
+
+int lights_on()
+{
+    int viper_device = get_viper_device();
+    int i = 0;
+
+    if (viper_device != &joy0)
+    {
+        set_all_viper_leds( LED_STATE_ON );
+    }
+
+    warthog_lights_on();
 }
 
 int lights_out()

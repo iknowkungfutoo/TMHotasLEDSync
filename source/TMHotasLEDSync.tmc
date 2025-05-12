@@ -11,7 +11,7 @@
   -- various lamps and console lighting of a variety of aircraft.
   --
   -- Author: slughead
-  -- Date: 14/04/2025
+  -- Date: 12/05/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -114,6 +114,11 @@ int TCPCallback(int buf, int size)
     {
         // read the aircraft type
         aircraft = get_aircraft( &packet_string );
+
+        if (aircraft == AIRCRAFT_UNDEFINED)
+        {
+            warthog_lights_on();
+        }
     }
     else if (packet[0] == 'u') // update status of lamps
     {
