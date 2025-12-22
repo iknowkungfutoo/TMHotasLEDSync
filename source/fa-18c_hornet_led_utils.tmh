@@ -8,7 +8,7 @@
   -- on Thrustmaster Warthog Throttle.
   --
   -- Author: slughead
-  -- Date: 14/04/2025
+  -- Date: 12/12/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -43,6 +43,13 @@ int set_fa_18c_hornet_led_status( alias led_states )
                 set_fa_18c_speed_brake_leds( speed_brake_position, (landing_gear_handle == 1) );
             }
         }
+    }
+
+    int device = get_viper_device();
+
+    if (device != &joy0)
+    {
+        set_led(device, LED_GEAR_WARNING,      landing_gear_handle);
     }
 }
 
