@@ -8,7 +8,7 @@
   -- on Thrustmaster Warthog Throttle.
   --
   -- Author: slughead
-  -- Date: 12/12/2025
+  -- Date: 26/12/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -19,18 +19,25 @@ int fa_18c_landing_gear_handle_previous_state  = -1;
 
 int set_fa_18c_hornet_led_status( alias led_states )
 {
-    int apu_ready_lamp_status = char_to_int(led_states[1]);
-    int speed_brake_position  = char_to_int(led_states[2]);
-    int console_light         = char_to_int(led_states[3]);
-    int landing_gear_handle   = char_to_int(led_states[4]);
+    int gear_nose           = char_to_int(led_states[1]);
+    int gear_left           = char_to_int(led_states[2]);
+    int gear_right          = char_to_int(led_states[3]);
+    int landing_gear_handle = char_to_int(led_states[4]);
+    int apu_ready_lamp      = char_to_int(led_states[5]);
+    int console_light       = char_to_int(led_states[6]);
+
+    // speed brake position is a percentage 0..100 over three characters
+    int speed_brake_position = (char_to_int(led_states[7]) * 100) +
+                               (char_to_int(led_states[8]) * 10 ) +
+                                char_to_int(led_states[9]);
 
     if (&Throttle != &joy0)
     {
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (apu_ready_lamp_status == 1) );
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (apu_ready_lamp == 1) );
 
         set_fa_18c_speed_brake_leds( speed_brake_position, (landing_gear_handle == 1) );
 
-        set_fa_18c_hornet_backlight( console_light);
+        set_fa_18c_hornet_backlight( console_light );
 
         if (fa_18c_landing_gear_handle_previous_state != landing_gear_handle)
         {
@@ -46,10 +53,16 @@ int set_fa_18c_hornet_led_status( alias led_states )
     }
 
     int device = get_viper_device();
-
     if (device != &joy0)
     {
-        set_led(device, LED_GEAR_WARNING,      landing_gear_handle);
+        set_led(device, LED_GEAR_NOSE,    gear_nose);
+        set_led(device, LED_GEAR_LEFT,    gear_left);
+        set_led(device, LED_GEAR_RIGHT,   gear_right);
+        set_led(device, LED_GEAR_WARNING, landing_gear_handle);
+
+        set_fa_18c_speed_brake_leds(speed_brake_position, 0);
+
+        set_led(device, LED_USER_RIGHT_5, apu_ready_lamp);
     }
 }
 
@@ -57,11 +70,21 @@ int set_fa_18c_speed_brake_leds(int speed_brake_position, int led1_reserved)
 {
     if (&Throttle != &joy0)
     {
-        if (led1_reserved != 1) set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 1));
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 2));
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 3));
-        set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 4));
-        //set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5)); // WH_LED5 reserved for APU light.
+        if (led1_reserved != 1) set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 25));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 50));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 75));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 100));
+        // WH_LED5 reserved for APU light.
+    }
+
+    int device = get_viper_device();
+    if (device != &joy0)
+    {
+        set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 20));
+        set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 40));
+        set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 60));
+        set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 80));
+        set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 100));
     }
 }
 

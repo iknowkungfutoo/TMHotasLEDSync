@@ -8,7 +8,7 @@
   -- and Warthog devices.
   --
   -- Author: slughead
-  -- Date: 12/05/2025
+  -- Date: 27/12/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -150,22 +150,6 @@ int lights_out()
 int set_backlight( int intensity )
 {
     ActKey(PULSE+KEYON+LED(&Throttle, LED_INTENSITY, intensity * 51));
-}
-
-int set_speed_brake_leds(int speed_brake_position)
-{
-    if ( aircraft == SU_25T |
-         aircraft == SU_33 )
-    {
-        if (&Throttle != &joy0)
-        {
-            set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 1));
-            set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 2));
-            set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 3));
-            set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 4));
-            set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 5));
-        }
-    }
 }
 
 // TODO led flashing currently does not support individual flashing LEDs

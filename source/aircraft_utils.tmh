@@ -7,7 +7,7 @@
   -- Aircraft utility functions.
   --
   -- Author: slughead
-  -- Date: 24/11/2023
+  -- Date: 27/12/2026
   --
   ------------------------------------------------------------------------------*/
 
@@ -25,8 +25,6 @@ int get_aircraft( alias packet_string )
     if (strcmp(&aircraft, "A-10C_2") == 0)       id = A_10C_2;
     if (strcmp(&aircraft, "F-16C_50") == 0)      id = F_16C_50;
     if (strcmp(&aircraft, "FA-18C_hornet") == 0) id = FA_18C_HORNET;
-    if (strcmp(&aircraft, "Su-25T") == 0)        id = SU_25T;
-    if (strcmp(&aircraft, "Su-33") == 0)         id = SU_33;
     if (strcmp(&aircraft, "JF-17") == 0)         id = JF_17;
 
     return id;

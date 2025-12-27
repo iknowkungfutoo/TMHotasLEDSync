@@ -7,8 +7,8 @@
   -- JF-17 specific utility functions to program the state of LEDs
   -- on Thrustmaster Warthog Throttle.
   --
-  -- Author: Tigershark2005
-  -- Date: 6/2/2024
+  -- Author: Tigershark2005, slughead
+  -- Date: 26/12/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -24,6 +24,11 @@ int set_jf_17_led_status( alias led_states )
   int gear_transit_status     = char_to_int(led_states[5]);
   int master_warning_status   = char_to_int(led_states[6]);
 
+  // speed brake position is a percentage 0..100 over three characters
+  int speed_brake_position = (char_to_int(led_states[7]) * 100) +
+                              (char_to_int(led_states[8]) * 10 ) +
+                              char_to_int(led_states[9]);
+
   if (gear_transit_status == 1)
   {
     gear_nose_status = LED_STATE_RED;
@@ -35,7 +40,6 @@ int set_jf_17_led_status( alias led_states )
   }
 
   int device = get_viper_device();
-
   if (device != &joy0)
   {
     set_led(device, LED_GEAR_NOSE,         gear_nose_status);
@@ -43,4 +47,28 @@ int set_jf_17_led_status( alias led_states )
     set_led(device, LED_GEAR_RIGHT,        gear_right_status);
     set_led(device, LED_GEAR_WARNING,      gear_warning_status);
   }
+
+  set_jf_17_speed_brake_leds(speed_brake_position, 0);
+}
+
+int set_jf_17_speed_brake_leds(int speed_brake_position, int led1_reserved)
+{
+    if (&Throttle != &joy0)
+    {
+        if (led1_reserved != 1) set_led(&Throttle, get_tm_warthog_led_id( WH_LED1 ), (speed_brake_position >= 20));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED2 ), (speed_brake_position >= 40));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED3 ), (speed_brake_position >= 60));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED4 ), (speed_brake_position >= 80));
+        set_led(&Throttle, get_tm_warthog_led_id( WH_LED5 ), (speed_brake_position >= 100));
+    }
+
+    int device = get_viper_device();
+    if (device != &joy0)
+    {
+        set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 20));
+        set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 40));
+        set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 60));
+        set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 80));
+        set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 100));
+    }
 }

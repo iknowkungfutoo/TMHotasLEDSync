@@ -39,13 +39,15 @@ The following aircraft are currently supported:
 
 | AIRCRAFT | EXPORTED PARAMETERS | SUPPORTED TM HOTAS THROTTLE |
 |------------|-----------------------------------------------------------------|-------------------------------|
-| A-10C | Speed brake position, gear warning, cockpit unlocked and console lighting. | Warthog |
-| A-10C_2 | Speed brake position, gear warning, cockpit unlocked and console lighting. | Warthog |
-| F-16 | Gear, gear warning, TWA indications, JFS RUN, MAIN GEN, STBY GEN, FLCS RLY, EPU RUN and the speed brake position. | Viper Mission Pack, Viper Panel |
-| FA-18_Hornet | Speed brake position, console lighting, APU RUN and Gear Handle lamp. | Warthog, Viper Mission Pack, Viper Panel |
-| JF-17 | Gear, gear warning, gear transit, master warning and the speed brake position. | Viper Mission Pack, Viper Panel |
-| Su-25T |Speed brake position. | Warthog |
-| Su-33 |Speed brake position. | Warthog |
+| A-10C | Speed brake position(1), gear warning(2), cockpit unlocked(1) and console lighting(3) | Warthog, Viper Mission Pack, Viper Panel |
+| A-10C_2 | Speed brake position(1), gear warning(2), cockpit unlocked(1) and console lighting(3) | Warthog, Viper Mission Pack, Viper Panel |
+| F-16 | Gear(2), gear warning(2), TWA indications(2), JFS RUN(2), MAIN GEN(2), STBY GEN(2), FLCS RLY(2), EPU RUN(2) and the speed brake position(2) | Viper Mission Pack, Viper Panel |
+| FA-18_Hornet | Speed brake position(1), console lighting(3), APU RUN(1), gear(2) and gear handle lamp(1) | Warthog, Viper Mission Pack, Viper Panel |
+| JF-17 | Gear(2), gear warning(2), gear transit(2), master warning(2) and the speed brake position(1) | Warthog, Viper Mission Pack, Viper Panel |
+
+1. Supported on Warthog, Viper Mission Pack and Viper Panel
+2. Supported on Viper Mission Pack Viper Panel
+3. Supported on Warthog
 
 # Suggestions And Feature Requests:
 
@@ -53,5 +55,5 @@ Feel free to make any suggestions for improvements on [dcs2target DCS thread](ht
 
 # Need Help?
 
-In the first instance, ensure you have installed v3.0.24.618_rev1 or later of the Thrustmaster TARGET software. Most problems are caused by people running old versions of the software.
+In the first instance, ensure you have installed the latest version of the Thrustmaster TARGET software and reboot your machine after any updates. Most problems are caused by people running old versions of the software and not rebooting after updating.
 If that does not solve your problem, raise an issue on the [dcs2target DCS thread](https://forum.dcs.world/topic/338119-dcs2target-dcs-to-thrustmaster-hotas-led-controller-viper-mission-pack-viper-panel-and-warthog/#comments). Be sure to include your dcs.log and TARGET script editor console output in your message (you can select, copy and paste directly from the TARGET console output using your mouse).

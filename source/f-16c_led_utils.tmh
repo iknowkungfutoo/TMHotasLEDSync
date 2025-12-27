@@ -8,7 +8,7 @@
   -- on Thrustmaster Viper Mission Pack / Panel.
   --
   -- Author: slughead
-  -- Date: 26/11/2023
+  -- Date: 26/12/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -34,7 +34,10 @@ int set_f_16c_led_status( alias led_states )
     int flcs_rly_status         = char_to_int(led_states[14]);
     int epu_status              = char_to_int(led_states[15]);
 
-    int speed_brake_position    = char_to_int(led_states[16]);
+    // speed brake position is a percentage 0..100 over three characters
+    int speed_brake_position    = (char_to_int(led_states[16]) * 100) +
+                                  (char_to_int(led_states[17]) * 10 ) +
+                                   char_to_int(led_states[18]);
 
     int device = get_viper_device();
 
@@ -85,10 +88,10 @@ int set_f_16c_speed_brake_leds(int speed_brake_position)
 
     if (device != &joy0)
     {
-        set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 1));
-        set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 2));
-        set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 3));
-        set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 4));
-        set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 5));
+        set_led(device, LED_USER_LEFT_1, (speed_brake_position >= 20));
+        set_led(device, LED_USER_LEFT_2, (speed_brake_position >= 40));
+        set_led(device, LED_USER_LEFT_3, (speed_brake_position >= 60));
+        set_led(device, LED_USER_LEFT_4, (speed_brake_position >= 80));
+        set_led(device, LED_USER_LEFT_5, (speed_brake_position >= 100));
     }
 }

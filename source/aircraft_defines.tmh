@@ -7,7 +7,7 @@
   -- Aircraft definitions.
   --
   -- Author: slughead
-  -- Date: 12/05/2025
+  -- Date: 27/12/2025
   --
   ------------------------------------------------------------------------------*/
 
@@ -18,9 +18,6 @@ define F_16C_50           103 // F-16C_50
 define F_16CM_50          103
 define FA_18C_HORNET      104 // FA-18C_hornet
 define JF_17              105 // JF-17
-
-define SU_25T             120 // Su-25T
-define SU_33              121 // Su-33
 
 //define SPITFIRE_LF_MKIX   200 // SpitfireLFMkIX
 //define TF_51D             201 // TF-51D
